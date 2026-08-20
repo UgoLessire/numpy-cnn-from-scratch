@@ -92,10 +92,7 @@ class CategoricalCrossEntropy:
         self.y_true = None
 
     def forward(self, y_pred, y_true):
-        """
-        y_pred : probabilités sorties par le Softmax (Batch, N_classes)
-        y_true : étiquettes en one-hot encoding (Batch, N_classes)
-        """
+       
         # Clip pour éviter log(0) qui renvoie NaN
         self.probs = np.clip(y_pred, 1e-15, 1 - 1e-15)
         self.y_true = y_true
@@ -105,14 +102,7 @@ class CategoricalCrossEntropy:
         return loss
 
     def backward(self):
-        """
-        Calcule dL/dA (gradient par rapport à la sortie du Softmax),
-        PAS le raccourci combiné dL/dZ = A - Y.
-        C'est la couche Activation(mode='softmax') qui applique ensuite
-        le vrai jacobien softmax_back pour obtenir dL/dZ = (A - Y) / N.
-        Si on renvoyait directement (A - Y) / N ici, le gradient softmax
-        serait appliqué deux fois (bug de double-dérivation).
-        """
+        
         N = self.probs.shape[0]
         return -(self.y_true / self.probs) / N
 
@@ -124,10 +114,7 @@ class BinaryCrossEntropy:
         self.y_true = None
 
     def forward(self, y_pred, y_true):
-        """
-        y_pred : probabilités sorties par la Sigmoid (Batch, 1)
-        y_true : étiquettes binaires 0 ou 1 (Batch, 1)
-        """
+        
         self.probs = np.clip(y_pred, 1e-15, 1 - 1e-15)
         self.y_true = y_true
         
@@ -137,12 +124,7 @@ class BinaryCrossEntropy:
         return loss
 
     def backward(self):
-        """
-        Calcule dL/dA (gradient par rapport à la sortie de la Sigmoid),
-        PAS le raccourci combiné dL/dZ = A - Y (même raison que pour
-        CategoricalCrossEntropy : sigmoid_back applique ensuite le vrai
-        jacobien pour obtenir dL/dZ = (A - Y) / N).
-        """
+       
         N = self.probs.shape[0]
         return (-(self.y_true / self.probs) + (1 - self.y_true) / (1 - self.probs)) / N
 
