@@ -67,11 +67,6 @@ def conv_backward(delta_apres, I, K, stride=1):
     dK       : (C_out, m, m, C_in)       -> Kernel weight gradients
     dB       : (C_out,)                  -> Bias gradients
     
-    Scientific Sources:
-    - Goodfellow, I., Bengio, Y., & Courville, A. (2016). Deep Learning. MIT Press.
-      (Section 9.3: Backpropagation in Convolutional Networks).
-    - Dumoulin, V., & Visin, F. (2016). A guide to convolution arithmetic for deep learning.
-      arXiv preprint arXiv:1603.07285.
     """
     batch_size, h_in, w_in, c_in = I.shape
     C_out, m, _, _ = K.shape
@@ -236,36 +231,34 @@ def leaky_relu_back(delta_apres, Z, alpha=0.01):
 
 def dense_forward(X, W, B):
     """
-    Passe avant d'une couche Dense (Fully Connected).
     
-    Paramètres:
+    Parameters:
     -----------
-    X : Input matrix de forme (Batch, in_features)
-    W : Poids de forme (in_features, out_features)
-    B : Biais de forme (out_features,)
+    X : Input matrix format (Batch, in_features)
+    W : Weights format (in_features, out_features)
+    B : Biases format (out_features,)
     
-    Retourne:
+    Output:
     --------
-    Z : Sortie de forme (Batch, out_features)
+    Z : Output (Batch, out_features)
     """
     return np.dot(X, W) + B
 
 
 def dense_backward(delta_apres, X, W):
     """
-    Passe arrière d'une couche Dense.
     
-    Paramètres:
+    Parameters:
     -----------
-    delta_apres : Gradient venant de la couche suivante, de forme (Batch, out_features)
-    X : Cache de l'entrée forward, de forme (Batch, in_features)
-    W : Poids de forme (in_features, out_features)
+    delta_apres : Gradient coming from the next layer, format (Batch, out_features)
+    X : entry, format (Batch, in_features)
+    W : weights (in_features, out_features)
     
     Retourne:
     --------
-    delta_in : Gradient rétropropagé vers la couche précédente (Batch, in_features)
-    dW : Gradient par rapport aux poids W (in_features, out_features)
-    dB : Gradient par rapport au biais B (out_features,)
+    delta_in : gradient coming from the old layer (Batch, in_features)
+    dW : Gradient for the weights W (in_features, out_features)
+    dB : Gradient for the biases B (out_features,)
     """
     dW = np.dot(X.T, delta_apres)
     dB = np.sum(delta_apres, axis=0)
